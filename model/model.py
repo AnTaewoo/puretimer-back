@@ -88,14 +88,14 @@ class UserModel:
             connection.close()
 
     @staticmethod
-    def update_user(user_uuid, data):
+    def update_user(data):
         connection = create_connection()
         if connection is None:
             return None, "Failed to connect to the database"
 
         try:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM user WHERE uuid = %s", (user_uuid,))
+            cursor.execute("SELECT * FROM user WHERE uuid = %s", (data["uuid"],))
             existing_user = cursor.fetchone()
 
             if not existing_user:
@@ -113,7 +113,7 @@ class UserModel:
                 (
                     data["password"],
                     current_date,
-                    user_uuid,
+                    data["uuid"],
                 ),
             )
             connection.commit()

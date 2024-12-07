@@ -43,16 +43,16 @@ def read_user(uuid):
     return jsonify({**response, "status": 200}), 200
 
 # 사용자 정보 수정
-@app_route.route("/update/<uuid>", methods=["PUT"])
-def update_user(uuid):
+@app_route.route("/update", methods=["PUT"])
+def update_user():
     data = request.get_json()
 
-    required_fields = ["email", "password"]
+    required_fields = ["uuid", "password"]
     for field in required_fields:
         if field not in data or not data[field]:
             return jsonify({"message": f"{field.capitalize()} is required!", "status": 404}), 400
 
-    response, error = UserController.update_user(uuid, data)
+    response, error = UserController.update_user(data)
     if error:
         return jsonify({"message": error, "status": 404}), 404
 
