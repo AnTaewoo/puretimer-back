@@ -53,22 +53,49 @@ def create_table(connection):
             PRIMARY KEY(uuid)
         );
         """
+        cursor.execute(query1)
+
         query2 = """
         CREATE TABLE IF NOT EXISTS studysession (
-            id INT AUTO_INCREMENT,       
-            user_uuid CHAR(32) NOT NULL,              
-            start_time DATETIME NOT NULL,            
-            end_time DATETIME NOT NULL,              
+            id INT AUTO_INCREMENT,
+            user_uuid CHAR(32) NOT NULL,
+            email VARCHAR(120) NOT NULL,
             subject VARCHAR(255),
-            PRIMARY KEY(id),
-            FOREIGN KEY (user_uuid) REFERENCES user(uuid)
+            start_time DATETIME NOT NULL,
+            end_time DATETIME NOT NULL,
+            waste_time TIME,
+            real_time TIME,
+            PRIMARY KEY (id),
+            FOREIGN KEY (user_uuid) REFERENCES user(uuid) ON DELETE CASCADE,
+            FOREIGN KEY (email) REFERENCES user(email)
         );
         """
-        cursor.execute(query1)
         cursor.execute(query2)
+
+        query3 = """
+        CREATE TRIGGER calculate_real_time
+        BEFORE INSERT ON studysession
+        FOR EACH ROW
+        BEGIN
+            SET NEW.real_time = TIMEDIFF(
+                TIMEDIFF(NEW.end_time, NEW.start_time),
+                COALESCE(NEW.waste_time, '00:00:00')
+            );
+        END;
+        """
+        cursor.execute(query3, multi=True)
+
         connection.commit()
-        print("Table 'user' created or already exists.")
+        print("Tables and trigger created successfully.")
     except Error as e:
         print(f"Table creation error: {e}")
     finally:
         cursor.close()
+
+
+if __name__ == "__main__":
+    create_database()
+    conn = create_connection()
+    if conn:
+        create_table(conn)
+        conn.close()

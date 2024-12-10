@@ -1,4 +1,4 @@
-from model.model import UserModel
+from model.model import UserModel,DetectModel
 
 class UserController:
     @staticmethod
@@ -30,8 +30,39 @@ class UserController:
         return {'message': 'User updated successfully!'}, None
 
     @staticmethod
-    def delete_user(user_uuid):
-        success, error = UserModel.delete_user(user_uuid)
+    def delete_user(uuid):
+        success, error = UserModel.delete_user(uuid)
         if error:
             return None, error
         return {'message': 'User deleted successfully!'}, None
+
+class ModelController:
+    @staticmethod
+    def detect_phone(data):
+        _data, error = DetectModel.detect_phone(data)
+        if error:
+            return None, error
+        return {'message': 'Detect successfully!', 'data': _data}, None
+
+    @staticmethod
+    def upload_post(data):
+        uploaded, error = DetectModel.upload_post(data)
+
+        if error:
+            return None, error
+
+        return {'message': 'Upload successfully!'}, None
+
+    @staticmethod
+    def get_post():
+        _data, error = DetectModel.get_post()
+        if error:
+            return None, error
+        return {'message': 'Get Post Data successfully!', 'data': _data}, None
+
+    @staticmethod
+    def get_post_by_uuid(uuid):
+        _data, error = DetectModel.get_post_by_uuid(uuid)
+        if error:
+            return None, error
+        return {'message': 'Get Post Data successfully!', 'data': _data}, None
