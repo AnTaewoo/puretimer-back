@@ -13,4 +13,4 @@ if __name__ == "__main__":
     if connection:
         create_table(connection)  # 테이블 생성 (없으면 생성)
         connection.close()
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=8080)
